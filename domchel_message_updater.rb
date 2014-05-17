@@ -70,5 +70,6 @@ end
 t = DomchelInteraction::MessageUpdater.new
 result = t.update_first
 puts result
+File.open(File.expand_path('.last_run'), 'w') { |f| f.write("Last run on #{Time.now} returned status code #{result}") }
 exit result
 
