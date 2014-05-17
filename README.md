@@ -1,4 +1,4 @@
-# Script updating first message on Domchel.ru site
+# Updating first message on Domchel.ru site
 
 ## Prerequisites
 
@@ -49,4 +49,17 @@ and [here](http://stackoverflow.com/questions/10508843/what-is-dev-null-21).
 * 3 - no need for update yet (updated recently)
 
 The script saves finish time and exit code to the `.last_run` file on each execution.
+
+# Saving views stats
+
+The second script of the repo aims to monitor views count of the first message on Domchel.
+It saves this information to a csv file with some additional information for future analysis.
+
+To schedule the script add this to your crontab (see above):
+
+    */10 * * * *  /bin/bash -l -c 'cd /Users/your_user_name/cron_scripts/domchel_ru_autoupdater && ./domchel_views_counter.rb' > /dev/null 2>&1
+
+It would run the script each 10 minutes.
+
+The resulting file is `views_info.csv`.
 

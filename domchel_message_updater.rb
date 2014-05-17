@@ -1,20 +1,10 @@
 #!/usr/bin/env ruby
-
-require 'rubygems'
-require 'capybara'
-require 'capybara/dsl'
-require 'capybara/poltergeist'
-
-Capybara.run_server = false
-#Capybara.current_driver = :selenium
-Capybara.current_driver = :poltergeist
-#Capybara.javascript_driver = :poltergeist
-Capybara.app_host = 'http://domchel.ru'
-Capybara.default_wait_time = 5
+require File.expand_path('shared.rb')
 
 module DomchelInteraction
   class MessageUpdater
     include Capybara::DSL
+    include DomchelInteraction::CommonActions
 
     LAST_UPDATED_FILENAME = '.last_updated'
     REPORT_TO_EMAILS = ENV['DOMCHEL_REPORT_TO_EMAILS']
@@ -22,17 +12,8 @@ module DomchelInteraction
     
     def update_first
       return 3 unless need_update?
-      visit('/')
-      click_link 'Вход'
-      fill_in 'Электронная почта', with: ENV['DOMCHEL_EMAIL']
-      fill_in 'Пароль', with: ENV['DOMCHEL_PASSWORD']
-      click_button 'Вход'
-      unless page.has_content? 'Мои сообщения'
-        puts 'Unable to authorize'
-        return 1
-      end
-      click_link 'Моя страница'
-      click_link 'Моя недвижимость'
+      domchel_login
+      visit_domchel_messages
       page.execute_script('$("tr[id*=\'row\']").trigger("mouseover")')
       find('img[src*="prolong"]').first(:xpath, './/..').click
       if page.has_content? 'Обновлено (поднято в списке) объявлений: 1'
